@@ -1,0 +1,136 @@
+openapi: "3.0.0"
+info:
+  title: Recipe Agent backend API service
+  version: 1.0.0
+paths:
+  /:
+    get:
+      operationId: welcomePage
+      summary: Home page
+      responses:
+        '200':
+          description: |-
+            Welcome message
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: 'Welcome to the Recipe Agent backend API!'
+  /recipe:
+    get:
+      operationId: getAllRecipes
+      responses:
+        '200':
+          description: successful query
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Recipe'
+    post:
+      operationId: addRecipe
+      description: Add a new recipe to the database
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Recipe'
+        required: true
+      responses:
+        '200':
+          description: Successful answer fo the insertion
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: 'Successfully added the new recipe!'
+        '400':
+          description: Invalid input
+  /recipe/findByTitle:
+    get:
+      summary: Find recipe by the title attribute
+      description: You can provide the whole title, or just a part of it (not case sensitive)
+      operationId: findByTitle
+      parameters:
+        - name: title
+          in: query
+          description: the title string
+          required: false
+          explode: true
+          schema:
+            type: string
+            default: ''
+            example: Gulyas soup
+      responses:
+        '200':
+          description: The query hits
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Recipe'
+        '404':
+          description: Not found
+components:
+  schemas:
+    Ingredient:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 77
+        name:
+          type: string
+          example: banana
+        ingredient_type:
+          type: string
+          description: The type of the recipe ingredient
+          example: meat
+          enum:
+            - meat
+            - dairy
+            - vegetable
+            - fruit
+            - bakery
+            - nuts
+            - beverages
+            - fats
+    Recipe:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 7
+        title:
+          type: string
+          example: Shakshuka
+        ingredients:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ingredient'
+        steps:
+          type: string
+          example: |-
+            1. Cut the veggies into small pieces
+            2. Heat the oil
+            3. Stir the veggies for 5 mins
+            4. Let it rest
+        prep_time:
+          type: int
+          description: Preparation time in minutes.
+          example: 40
+        cook_time:
+          type: int
+          description: Cooking (baking) time in minutes.
+          example: 30
+        meal_type:
+          type: string
+          example: lunch
+          enum:
+            - breakfast
+            - lunch
+            - dinner
