@@ -18,7 +18,34 @@ paths:
               example: 'Welcome to the Recipe Agent backend API!'
   /recipe:
     get:
-      operationId: getAllRecipes
+      operationId: getRecipes
+      parameters:
+        - name: title
+          in: query
+          description: the title string
+          required: false
+          explode: true
+          schema:
+            type: string
+            default: ''
+            example: Gulyas soup
+        - name: meal_type
+          in: query
+          description: the type of the meal
+          required: false
+          schema:
+            type: string
+            enum:
+              - breakfast
+              - lunch
+              - dinner
+        - name: prep_time
+          in: query
+          description: The amount of time needed to cook the meal (less then equals) in minutes.
+          required: false
+          schema:
+            type: integer
+            example: 75
       responses:
         '200':
           description: successful query
@@ -47,21 +74,18 @@ paths:
               example: 'Successfully added the new recipe!'
         '400':
           description: Invalid input
-  /recipe/findByTitle:
+  /recipe/{recipe_id}:
     get:
-      summary: Find recipe by the title attribute
-      description: You can provide the whole title, or just a part of it (not case sensitive)
-      operationId: findByTitle
+      summary: Find recipe by the ID
+      description: THe ID is coming from the database
+      operationId: getRecipeById
       parameters:
-        - name: title
-          in: query
-          description: the title string
-          required: false
-          explode: true
+        - name: recipe_id
+          in: path
+          required: true
           schema:
-            type: string
-            default: ''
-            example: Gulyas soup
+            type: integer
+            example: 7
       responses:
         '200':
           description: The query hits
@@ -71,6 +95,183 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Recipe'
+        '404':
+          description: Not found
+    put:
+      summary: Update recipe
+      description: Update the recipe's attributes which belongs to the ID
+      operationId: updateRecipeById
+      parameters:
+        - name: recipe_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 7
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Recipe'
+        required: true
+      responses:
+        '200':
+          description: The query hits
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: 'Successful modification of the recipe!'
+        '400':
+          description: Invalid input
+        '404':
+          description: Not found
+    delete:
+      summary: Remove recipe
+      description: Remove the specified recipe from the database
+      operationId: deleteRecipeById
+      parameters:
+        - name: recipe_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 7
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not found
+  /ingredient:
+    get:
+      summary: Find ingredient(s)
+      description: Provide attributes to list ingredients from the database. If no attribute is provided, it returns all.
+      operationId: getIngredients
+      parameters:
+        - name: ingredient_id
+          in: query
+          required: false
+          schema:
+            type: integer
+            example: 7
+        - name: name
+          in: query
+          required: false
+          schema:
+            type: string
+            example: carrot
+        - name: ingredient_type
+          in: query
+          required: false
+          schema:
+            type: string
+            example: carrot
+            enum:
+              - meat
+              - dairy
+              - vegetable
+              - fruit
+              - bakery
+              - nuts
+              - beverages
+              - fats
+      responses:
+        '200':
+          description: The query hits
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ingredient'
+        '404':
+          description: Not found
+    post:
+      summary: Add new ingredient
+      description: Add a new ingredient into the database
+      operationId: addIngredient
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ingredient'
+        required: true
+      responses:
+        '200':
+          description: Successful addition
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: 'Successfully added new ingredient!'
+        '400':
+          description: Invalid input
+  /ingredient/{ingredient_id}:
+    get:
+      summary: Find ingredient by the ID
+      description: THe ID is coming from the database
+      operationId: getIngredientById
+      parameters:
+        - name: ingredient_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 7
+      responses:
+        '200':
+          description: The query hits
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ingredient'
+        '404':
+          description: Not found
+    put:
+      summary: Update ingredient
+      description: Update the ingredient's attributes which belongs to the ID
+      operationId: updateIngredientById
+      parameters:
+        - name: ingredient_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 7
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ingredient'
+        required: true
+      responses:
+        '200':
+          description: The query hits
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: 'Successful modification of the ingredient!'
+        '400':
+          description: Invalid input
+        '404':
+          description: Not found
+    delete:
+      summary: Remove ingredient
+      description: Remove the specified ingredient from the database
+      operationId: deleteIngredientById
+      parameters:
+        - name: ingredient_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 7
+      responses:
+        '200':
+          description: OK
         '404':
           description: Not found
 components:
