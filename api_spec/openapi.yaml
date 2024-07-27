@@ -1,11 +1,13 @@
 openapi: "3.0.0"
+servers:
+  - url: http://localhost:8080/
 info:
   title: Recipe Agent backend API service
   version: 1.0.0
 paths:
   /:
     get:
-      operationId: welcomePage
+      operationId: getHome
       summary: Home page
       responses:
         '200':
