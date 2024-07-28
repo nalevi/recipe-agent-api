@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  recipe-db:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_DB: recipeagent
+      POSTGRES_USER: recipeagentuser
+      POSTGRES_PASSWORD: recipeagentpw
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+#  app:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    container_name: recipe-agent-api
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - recipe-db
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://recipe-db:5432/recipeagent
+#      SPRING_DATASOURCE_USERNAME: recipeagentuser
+#      SPRING_DATASOURCE_PASSWORD: recipeagentpw
+
+volumes:
+  postgres_data:
